@@ -1,0 +1,14 @@
+---
+alwaysApply: false
+globs:
+  - "backend/app/platform/projections/**"
+  - "backend/app/**/projections.py"
+  - "frontend/src/**"
+---
+
+# Projections / Read Models
+
+- Read models are first-class and are the default UI read source.
+- Projections are updated from outbox events (worker-driven).
+- Read models may denormalize and are rebuildable.
+- After command endpoints, return enough summary state for UI to update immediately.

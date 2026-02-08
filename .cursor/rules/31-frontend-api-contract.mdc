@@ -1,0 +1,15 @@
+---
+alwaysApply: false
+globs:
+  - "frontend/src/**"
+---
+
+# Frontend API Contract
+
+- OpenAPI is the source of truth.
+- Frontend uses generated TS types + client only.
+- No handwritten API typing.
+- Any backend contract change must:
+  - update generation artifacts
+  - update usages
+  - pass CI drift gate

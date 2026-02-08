@@ -1,0 +1,16 @@
+---
+alwaysApply: false
+globs:
+  - "backend/app/modules/ledger/**"
+  - "backend/app/modules/gl/**"
+---
+
+# Ledger Immutability Rules
+
+- Posted journal entries cannot be updated or deleted.
+- Corrections occur via reversals and/or new correcting entries.
+- Services must enforce balanced entries.
+- Every ledger mutation must be tested:
+  - posting immutability
+  - reversal correctness
+  - balancing invariant

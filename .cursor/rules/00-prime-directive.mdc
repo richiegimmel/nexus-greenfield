@@ -1,3 +1,19 @@
 ---
 alwaysApply: true
 ---
+
+# Prime Directive (Atlas ERP)
+
+- This is a modular monolith: platform → modules → workflows → API composition.
+- Modules own tables + invariants + APIs. No shared "common domain".
+- No cross-module internal imports; only public exports from other modules or events/read models.
+- No cross-module ORM relationships; reference by ID.
+- Workflows orchestrate; never own domain tables.
+- Ledger postings are immutable once posted (append-only; corrections via reversal/new entry).
+- Workflow transitions must be concurrency-safe (expected_version) and idempotent (idempotency_key).
+- Overrides are explicit events requiring justification and RBAC permission.
+- UI must be fast: default reads come from read models/projections, not transactional tables.
+- OpenAPI is the source of truth; frontend uses generated TS client/types only.
+
+Output requirements for every agent action:
+- List files changed, commands to run, tests added, and verification steps.

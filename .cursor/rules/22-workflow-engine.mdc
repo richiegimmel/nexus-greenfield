@@ -1,0 +1,17 @@
+---
+alwaysApply: false
+globs:
+  - "backend/app/workflows/**"
+---
+
+# Workflow Engine Rules
+
+- Workflow definitions live in YAML under their workflow directory.
+- Engine must validate definitions at startup (fail fast).
+- Workflow instance supports optimistic locking via `expected_version`.
+- Event ingestion supports `idempotency_key` and returns same result if repeated.
+- Transition history is append-only.
+- Override transitions must:
+  - be explicit events
+  - include `override_reason`
+  - require RBAC permission

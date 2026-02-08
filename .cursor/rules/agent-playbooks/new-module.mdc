@@ -1,0 +1,15 @@
+---
+alwaysApply: false
+description: "Follow these rules when creating a new backend domain module under backend/app/modules/*"
+---
+
+# New Module Playbook
+
+When asked to create a new module:
+1) Create folder structure: models.py, schemas.py, service.py, api.py, events.py, tests/
+2) Add Alembic migration(s) owned by the module's tables.
+3) Expose public API from __init__.py only.
+4) Add module router and wire it in api composition layer.
+5) Add tests for invariants and API behavior.
+6) Update /docs/architecture/MODULE_MAP.md with ownership and events.
+7) Run: lint, typecheck, tests, migration apply.

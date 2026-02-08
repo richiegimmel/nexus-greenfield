@@ -1,0 +1,17 @@
+---
+alwaysApply: true
+---
+
+# Canonical Commands
+
+Always use these commands (no ad-hoc scripts):
+
+- make bootstrap
+- make dev
+- make lint
+- make typecheck
+- make test
+- make contract   # OpenAPI -> generated TS
+- make boundaries # import-linter/boundary enforcement
+- make migrate    # apply migrations
+- make seed       # seed reference data for local

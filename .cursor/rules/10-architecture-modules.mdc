@@ -1,0 +1,20 @@
+---
+alwaysApply: false
+globs:
+  - "backend/**"
+---
+
+# Backend Architecture Boundaries
+
+## Module rules
+- Each module lives at `backend/app/modules/<module>/`.
+- Tables are owned by a single module.
+- Disallow imports into `backend/app/modules/*` from other module internals (models/schemas/service).
+- Allowed: import `backend/app/modules/<module>/__init__.py` exports only.
+- Workflows call module public APIs; workflows do not directly mutate module tables.
+
+## Review gates
+- Any cross-cutting pattern change requires:
+  - docs update under /docs
+  - ADR if it affects multiple modules
+  - CI must enforce boundaries

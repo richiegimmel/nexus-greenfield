@@ -1,0 +1,13 @@
+---
+alwaysApply: false
+description: "Follow these rules when adding a new workflow under backend/app/workflows/*"
+---
+
+# New Workflow Playbook
+
+1) Create definition.yaml with states, events, guards, transitions.
+2) Implement guards in code (config + code guards).
+3) Ensure engine validation covers this workflow.
+4) Ensure optimistic locking and idempotency are honored.
+5) Add tests: happy path + failure paths + override path.
+6) Add projection updates for rm_* summary tables.
