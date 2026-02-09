@@ -1,0 +1,40 @@
+---
+alwaysApply: false
+description: "Follow these rules when creating a new projection/read model for UI consumption"
+---
+
+# New Projection Playbook
+
+When asked to create a new projection or read model:
+
+1) **Define the read model table.**
+   - Table name: `rm_<entity>_<view>` (e.g., `rm_job_summary`, `rm_invoice_list`).
+   - Owned by the module or placed in `backend/app/platform/projections/` if cross-module.
+   - Denormalization is expected — include all fields the UI needs without joins.
+   - Include `last_projected_at` timestamp and `source_event_id` for traceability.
+
+2) **Create the projection builder.**
+   - A function/class that consumes outbox events and upserts the read model.
+   - Must be idempotent: replaying the same event produces the same result.
+   - Must be rebuildable: a "rebuild" function can reproject from scratch.
+
+3) **Wire the outbox consumer.**
+   - Register the projection builder with the outbox/event consumer (Celery worker).
+   - Ensure ordering guarantees are documented (at-least-once delivery; idempotent handler).
+
+4) **Create the read API endpoint.**
+   - GET endpoint that queries the read model table directly.
+   - Support pagination, filtering, and sorting as needed by the UI.
+   - This endpoint must NOT query transactional tables.
+
+5) **Add tests.**
+   - Test that projecting an event produces the correct read model state.
+   - Test idempotency: projecting the same event twice yields the same result.
+   - Test rebuild: clearing and rebuilding produces the same result as incremental projection.
+
+6) **Verification.**
+   - `make lint`
+   - `make typecheck`
+   - `make test`
+   - `make migrate` (if new table)
+   - `make contract` (if new API endpoint)

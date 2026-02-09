@@ -1,0 +1,40 @@
+---
+alwaysApply: false
+globs:
+  - "frontend/**"
+---
+
+# Frontend (Next.js) Standards
+
+## Project structure
+- App Router: `frontend/src/app/`
+- Feature modules: `frontend/src/modules/<module>/` (aligned to backend modules)
+- Generated API client: `frontend/src/api/generated/`
+- Shared UI components: `frontend/src/components/`
+- Hooks: `frontend/src/hooks/`
+
+## Next.js usage
+- Client-first: most pages use `"use client"` — this is not a public-facing SEO app.
+- Server components only where they provide clear data-loading or layout benefits.
+- App Router for routing; no Pages Router.
+
+## Component conventions
+- Functional components only (no class components).
+- TypeScript for all files (`.tsx` / `.ts`).
+- Co-locate component-specific styles, types, and tests with the component.
+- Shared/reusable components go in `frontend/src/components/`.
+- Module-specific components stay in `frontend/src/modules/<module>/`.
+
+## State and data fetching
+- Server state: use the generated API client with a data-fetching library (e.g., TanStack Query).
+- Local UI state: React `useState` / `useReducer`.
+- Workflow instance state drives the UI — server is authoritative.
+- Optimistic UI only where explicitly designed and documented.
+
+## Styling
+- Use a consistent styling approach (e.g., Tailwind CSS or CSS Modules).
+- No inline style objects except for truly dynamic values.
+
+## Types
+- All API types come from `frontend/src/api/generated/` — never handwrite API types.
+- Component prop types defined with `interface` or `type` next to the component.

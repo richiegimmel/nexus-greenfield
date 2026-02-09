@@ -1,0 +1,48 @@
+---
+alwaysApply: false
+description: "Follow these rules when integrating a module or workflow with the outbox event system"
+---
+
+# Outbox Integration Playbook
+
+When asked to publish or consume events via the outbox:
+
+## Publishing events
+
+1) **Define the event schema.**
+   - Create or update `events.py` in the module directory.
+   - Use Pydantic models for event payloads.
+   - Event names: `<module>.<entity>.<action>` (e.g., `ledger.journal_entry.posted`, `jobshop.job.status_changed`).
+   - Include all data the consumer needs — consumers must not call back into the publisher's internals.
+
+2) **Write to the outbox table.**
+   - Within the same database transaction as the domain write, insert a row into the outbox table.
+   - Fields: `event_type`, `payload` (JSON), `aggregate_id`, `aggregate_type`, `created_at`, `published_at` (null until delivered).
+   - Never publish outside the transaction boundary (no dual-write risk).
+
+3) **Test the publication.**
+   - Assert that performing the domain action creates the correct outbox row.
+   - Assert that the outbox row payload matches the event schema.
+
+## Consuming events
+
+4) **Register a consumer/handler.**
+   - Consumers are Celery tasks (or equivalent worker functions).
+   - Each consumer handles one event type or a small family of related events.
+   - Consumers must be idempotent: processing the same event twice must be safe.
+   - Use `event_id` or `idempotency_key` to detect duplicates.
+
+5) **Implement the handler.**
+   - The handler updates read models, triggers side effects, or calls other module public APIs.
+   - Never import another module's internal models/services — use public APIs only.
+   - If the handler fails, it should be retryable (no partial side effects without rollback).
+
+6) **Test the consumer.**
+   - Test happy path: event consumed, expected side effect occurs.
+   - Test idempotency: same event consumed twice, no duplicate side effects.
+   - Test failure: handler raises, event remains unconsumed for retry.
+
+## Verification
+- `make lint`
+- `make typecheck`
+- `make test`

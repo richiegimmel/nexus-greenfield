@@ -1,0 +1,42 @@
+---
+alwaysApply: false
+globs:
+  - "backend/**"
+---
+
+# Backend Standards
+
+## Project structure
+- FastAPI app entry point: `backend/app/main.py`
+- Modules: `backend/app/modules/<module>/`
+- Workflows: `backend/app/workflows/<workflow>/`
+- Platform infra: `backend/app/platform/`
+- API composition: `backend/app/api/`
+
+## Naming conventions
+- Files: `snake_case.py`
+- Classes: `PascalCase`
+- Functions/variables: `snake_case`
+- Database tables: `snake_case`, prefixed by module name (e.g., `ledger_journal_entries`)
+- Pydantic schemas: suffix with purpose (`CreateJobRequest`, `JobResponse`, `JobSummary`)
+- API routers: one per module in `api.py`, mounted in `backend/app/api/`
+
+## FastAPI conventions
+- Use `APIRouter` per module; compose in the API layer.
+- All endpoints return Pydantic response models (no raw dicts).
+- Use dependency injection for DB sessions, auth context, and services.
+- Command endpoints (POST/PUT/PATCH/DELETE) return the updated resource summary.
+- Query endpoints (GET) read from projections/read models by default.
+- Use HTTP 409 for optimistic locking conflicts.
+- Use HTTP 422 for domain validation failures (Pydantic handles input validation).
+
+## Error handling
+- Raise domain-specific exceptions in service/module code.
+- Translate domain exceptions to HTTP responses in the API layer, not in services.
+- Never catch and silence exceptions without logging.
+
+## Testing
+- Tests live in `backend/app/modules/<module>/tests/` or `backend/tests/`.
+- Use pytest. Fixtures for DB sessions, test clients, and seed data.
+- Every service function and API endpoint must have tests.
+- Test invariants explicitly (immutability, balancing, boundary violations).

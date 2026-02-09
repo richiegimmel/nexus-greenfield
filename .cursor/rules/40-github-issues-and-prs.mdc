@@ -1,0 +1,55 @@
+---
+alwaysApply: false
+globs:
+  - ".github/**"
+description: "Follow these rules when creating GitHub issues, PRs, or working with the development workflow"
+---
+
+# GitHub Issues & PRs
+
+## Branch model
+- `main`: always releasable.
+- `feature/<issue-number>-<short-name>`: all work happens here.
+- `hotfix/<issue-number>-<short-name>`: production fixes only.
+
+## Issue requirements
+Every issue must contain:
+- **Context**: what and why.
+- **Acceptance criteria**: testable conditions for "done."
+- **Constraints**: module boundaries, immutability, determinism, etc.
+- **Tests required**: what must be tested.
+- **Agent Execution Prompt**: a copy/paste prompt for the implementing agent.
+- **Closure gates**: canonical commands that must pass.
+
+## PR requirements
+Every PR must contain:
+- Scope summary (one concept per PR).
+- Acceptance criteria checklist.
+- Tests added and how to run them.
+- Migrations included and safety notes (if applicable).
+- Rollback plan.
+- Docs updated (if patterns changed).
+
+## PR checklist (include in every PR body)
+- [ ] Scope limited to one issue
+- [ ] Module ownership respected (no cross-module internals)
+- [ ] Tests added/updated
+- [ ] Migrations included and safe
+- [ ] Contract regen run; no drift
+- [ ] Projections/read models used for UI reads
+- [ ] Workflow determinism + optimistic locking preserved
+- [ ] Ledger immutability preserved
+- [ ] Docs updated (if pattern changed)
+- [ ] Rollback plan included
+
+## Labels
+- `type/feature`, `type/bug`, `type/chore`, `type/docs`
+- `module/<name>` (e.g., `module/ledger`, `module/dimensions`)
+- `workflow/<name>` (e.g., `workflow/mr_job_shop`)
+- `platform/<area>` (e.g., `platform/outbox`, `platform/projections`)
+- `priority/p0`, `priority/p1`, `priority/p2`
+- `risk/high`, `risk/med`, `risk/low`
+
+## Merge policy
+- Squash merge preferred for clean history.
+- One PR per issue. If a PR touches multiple modules, justify and document why.
