@@ -1,6 +1,6 @@
 # Business Context
 
-Atlas Machine and Supply operates with four business units.
+Atlas Machine and Supply operates with four business units. The current ERP is **Epicor Kinetic (cloud, latest version)**, which will be replaced via big-bang cutover.
 
 ## Operational Business Units
 

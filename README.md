@@ -3,7 +3,7 @@
 A custom, internal ERP platform for **Atlas Machine and Supply**.  
 Single-tenant. Workflow-driven. Deterministic. Fast.
 
-This system replaces **Epicor first** (ERP / MRP / Jobs / GL) and later **Salesforce**.  
+This system replaces **Epicor Kinetic (cloud)** first (ERP / MRP / Jobs / GL) and later **Salesforce**.  
 It is not a SaaS product. It is purpose-built for Atlas's operations.
 
 ---
@@ -66,10 +66,11 @@ platform → modules → workflows → API composition
 
 ### Platform
 Cross-cutting infrastructure:
-- DB/session management
+- DB/session management (synchronous SQLAlchemy)
 - Auth & RBAC
 - Outbox
 - Projections (read models)
+- Documents (S3-backed file storage)
 - Logging, settings, error handling
 
 ### Modules
