@@ -21,6 +21,11 @@ globs:
 - Pydantic schemas: suffix with purpose (`CreateJobRequest`, `JobResponse`, `JobSummary`)
 - API routers: one per module in `api.py`, mounted in `backend/app/api/`
 
+## SQLAlchemy: synchronous only
+- Use synchronous SQLAlchemy sessions everywhere (no async engine, no async sessions).
+- FastAPI endpoints that need DB access use sync functions with `Depends(get_db)`.
+- Celery workers share the same sync session factory.
+
 ## FastAPI conventions
 - Use `APIRouter` per module; compose in the API layer.
 - All endpoints return Pydantic response models (no raw dicts).

@@ -41,7 +41,7 @@ Tooling:
 - JS/TS: eslint, prettier, typecheck, test runner (vitest/jest)
 - pre-commit
 - GitHub Actions CI runs: backend lint/type/tests, frontend lint/type/tests, contract generation drift check, boundary enforcement check.
-- docker-compose for local Postgres + Redis
+- docker-compose for local Postgres + Redis + MinIO (S3-compatible object storage for documents)
 
 Deliver:
 1) Full directory structure

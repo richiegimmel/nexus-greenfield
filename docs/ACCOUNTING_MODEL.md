@@ -15,4 +15,12 @@ Ledger characteristics:
   - business_unit
   - (future: department, project)
 
+## Currency
+
+**All financial amounts are USD. Multi-currency is not in scope.**
+
+There are no `currency_code` or `exchange_rate` fields on journal lines. If multi-currency is ever needed in the future, it would be introduced as a new schema version — but that is not a current or planned requirement.
+
+## Accounting-Grade Immutability
+
 This is accounting-grade immutability, even if regulatory compliance is not required.
