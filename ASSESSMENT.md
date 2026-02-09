@@ -121,13 +121,15 @@ Prompt `003` explicitly says "async or sync, choose one and standardize." This d
 - Mixing sync and async SQLAlchemy sessions is a well-known source of bugs (event loop conflicts, session lifecycle mismatches between FastAPI request handlers and Celery workers).
 
 **Decision needed:**
-- [ ] Sync or async SQLAlchemy sessions?
+- [x] Sync or async SQLAlchemy sessions? → **Sync. Decided 2026-02-09.**
 
 **Recommendation:** Use **sync SQLAlchemy**. Rationale:
 - This is a single-tenant internal system, not a high-concurrency SaaS product. The concurrency benefits of async are minimal.
 - Celery workers (which handle outbox processing and projection updates) run synchronously. Mixing sync workers with async request handlers adds complexity for no benefit.
 - Sync is simpler to debug, test, and reason about — important when AI agents are writing the code.
 - FastAPI supports sync endpoints without issue; the performance difference at Atlas's scale is negligible.
+
+**Files updated:** `prompts/003-platform-core.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `.cursor/rules/20-backend-standards.mdc`
 
 ---
 
@@ -147,9 +149,11 @@ But `inventory`, `purchasing`, and `catalog` have no implementation prompts. The
 - If the guard is always-pass, it's not testing real behavior. If it requires a real inventory module, M4 is blocked on unplanned work.
 
 **Decision needed:**
-- [ ] For M4: stub material allocation as a manual flag / override, or build a thin `inventory` module?
+- [x] For M4: stub material allocation as a manual flag / override, or build a thin `inventory` module? → **Manual confirmation event (stub). Decided 2026-02-09.**
 
-**Recommendation:** Stub it. The `MaterialsAllocated` event should be manually triggerable (an explicit event the user fires, like "I confirm materials are ready"), with the guard checking whether that event has been recorded — not checking actual inventory levels. This keeps M4 achievable without building inventory, and the real integration can replace the manual trigger later. Document this explicitly in the `010` prompt so agents don't invent their own solution.
+**Recommendation:** ~~Stub it.~~ **Done.** The `MaterialsAllocated` event is a manual confirmation — the user fires it to indicate "materials are ready." The guard checks for the event in transition history, not inventory levels. Documented explicitly in prompt `010` with instructions for agents not to invent temporary inventory infrastructure.
+
+**Files updated:** `prompts/010-module-workflows-v0.md`
 
 ---
 
@@ -164,10 +168,12 @@ The ledger has `debit` and `credit` on journal lines, but there is no mention of
 - Even if everything is USD today, a `currency` field with a default of `USD` is cheap insurance.
 
 **Decision needed:**
-- [ ] Is everything always USD? If yes, document this as an explicit constraint.
-- [ ] If there's any possibility of multi-currency, add `currency_code` (default `USD`) and `exchange_rate` (default `1.0`) to `journal_line` in prompt `007`.
+- [x] Is everything always USD? → **Yes. USD-only. Decided 2026-02-09.**
+- [ ] ~~If there's any possibility of multi-currency, add `currency_code` (default `USD`) and `exchange_rate` (default `1.0`) to `journal_line` in prompt `007`.~~ N/A — USD-only confirmed.
 
-**Recommendation:** If USD-only, add a single line to `ACCOUNTING_MODEL.md`: "All financial amounts are USD. Multi-currency is not in scope." If there's any doubt, add the two fields now — they cost nothing on an empty system.
+**Recommendation:** ~~If USD-only, add a single line to `ACCOUNTING_MODEL.md`~~ **Done.** USD-only constraint documented in `ACCOUNTING_MODEL.md`, prompt `007`, and `.cursor/rules/23-ledger-immutability.mdc`.
+
+**Files updated:** `docs/ACCOUNTING_MODEL.md`, `prompts/007-module-ledger.md`, `.cursor/rules/23-ledger-immutability.mdc`
 
 ---
 
@@ -182,11 +188,13 @@ Job shop operations typically involve: engineering drawings, customer POs, shipp
 - Without a shared `documents` platform service, there's no consistent way to attach files to entities, manage storage lifecycle, or build file-aware read models.
 
 **Decision needed:**
-- [ ] Does Nexus need to store/manage documents?
-- [ ] If yes: S3-compatible object storage with a thin `documents` platform service (upload, download, reference-by-ID)?
-- [ ] If no: how are documents handled? (External system? Manual process?)
+- [x] Does Nexus need to store/manage documents? → **Yes. Decided 2026-02-09.**
+- [x] If yes: S3-compatible object storage with a thin `documents` platform service (upload, download, reference-by-ID)? → **Yes. S3 for production, MinIO for local dev.**
+- [ ] ~~If no~~ N/A.
 
-**Recommendation:** If documents are in scope, add a platform-level `documents` service to the module map (not a full module — just a utility like outbox or projections). Define it before M4, since the first workflow (job shop) will almost certainly need to reference customer POs and drawings.
+**Recommendation:** ~~If documents are in scope~~ **Done.** Documents added as a platform-level service in the module map (prompt `002`). MinIO added to docker-compose in scaffold prompt (`001`). Architecture overview and README updated.
+
+**Files updated:** `prompts/001-scaffold-monorepo-tooling-boundaries.md`, `prompts/002-module-map-ownership-dep-graph.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `README.md`
 
 ---
 
@@ -202,11 +210,13 @@ The documentation mentions "big-bang cutover" and the development workflow doc (
 - Historical financial data import (opening balances at minimum) requires the ledger schema to accommodate Epicor's structure.
 
 **Decision needed:**
-- [ ] Which Epicor version is in production? (Epicor 10 / Kinetic / Prophet 21 / other)
-- [ ] Can you export the chart of accounts, site list, cost center list, and customer/vendor master now?
+- [x] Which Epicor version is in production? → **Epicor Kinetic (cloud, latest version). Decided 2026-02-09.**
+- [ ] Can you export the chart of accounts, site list, cost center list, and customer/vendor master now? *(Still needed — export from Kinetic REST APIs or BAQs to validate M2 schema design.)*
 - [ ] What is the cutover boundary? (Opening balances only, or historical transaction import?)
 
-**Recommendation:** Export Epicor reference data (COA, sites, cost centers, customers, vendors) early and use it to validate schema design in M2. This doesn't require building a migration pipeline — just ensuring the new schema can represent the existing data without lossy transformation.
+**Recommendation:** Export Epicor reference data (COA, sites, cost centers, customers, vendors) early and use it to validate schema design in M2. This doesn't require building a migration pipeline — just ensuring the new schema can represent the existing data without lossy transformation. Epicor Kinetic's REST APIs and BAQs make this export straightforward.
+
+**Files updated:** `docs/PROJECT_CONTEXT.md`, `docs/BUSINESS_CONTEXT.md`, `README.md`
 
 ---
 
@@ -244,11 +254,11 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 |---|----------|----------|----------|--------|
 | D1 | Chart of accounts schema (hierarchy, type, account_number) | HIGH | M2 | `OPEN` |
 | D2 | Build thin `party` module in M2? | HIGH | M2 | `OPEN` |
-| D3 | Sync vs async SQLAlchemy | HIGH | M0 | `OPEN` |
-| D4 | Material allocation stub strategy for M4 | MEDIUM | M4 | `OPEN` |
-| D5 | Multi-currency: USD-only or add currency fields? | MEDIUM | M2 | `OPEN` |
-| D6 | Document/file storage in scope? | MEDIUM | M4 | `OPEN` |
-| D7 | Epicor version and reference data export | MEDIUM | M2 | `OPEN` |
+| D3 | Sync vs async SQLAlchemy | HIGH | M0 | `DECIDED` — **Sync**. Updated: prompt 003, ARCHITECTURE_OVERVIEW.md, backend standards rule. |
+| D4 | Material allocation stub strategy for M4 | MEDIUM | M4 | `DECIDED` — **Manual confirmation event**. Updated: prompt 010. |
+| D5 | Multi-currency: USD-only or add currency fields? | MEDIUM | M2 | `DECIDED` — **USD-only, no currency fields**. Updated: ACCOUNTING_MODEL.md, prompt 007, ledger rule. |
+| D6 | Document/file storage in scope? | MEDIUM | M4 | `DECIDED` — **In scope, S3-backed platform service (MinIO local)**. Updated: prompts 001, 002, ARCHITECTURE_OVERVIEW.md, README.md. |
+| D7 | Epicor version and reference data export | MEDIUM | M2 | `DECIDED` — **Epicor Kinetic (cloud, latest)**. Updated: PROJECT_CONTEXT.md, BUSINESS_CONTEXT.md, README.md. Reference data export still needed to validate schema. |
 | D8 | Rental fleet — explicitly deferred? | LOW | — | `OPEN` |
 | D9 | Notification platform service — future scope? | LOW | — | `OPEN` |
 | D10 | Reporting / BI strategy | LOW | M5 | `OPEN` |
@@ -261,14 +271,14 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 
 These should be completed before executing prompt `001`:
 
-1. **Decide D3 (sync vs async).** This affects the scaffold structure. Recommendation: sync.
-2. **Decide D1 (COA schema).** Export Epicor COA if available. At minimum, add `account_type` and `account_number` to prompt `007`.
-3. **Decide D5 (currency).** Add a one-line constraint to `ACCOUNTING_MODEL.md`, or add the fields to prompt `007`.
-4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`.
-5. **Decide D4 (materials stub).** Add a note to prompt `010` documenting the stub strategy.
-6. **Decide D6 (documents).** If in scope, add to module map. If not, document the deferral.
+1. ~~**Decide D3 (sync vs async).**~~ ✅ **Done.** Sync SQLAlchemy. Updated prompt 003, architecture docs, backend standards rule.
+2. **Decide D1 (COA schema).** Export Epicor COA if available. At minimum, add `account_type` and `account_number` to prompt `007`. *(Still open — HIGH priority.)*
+3. ~~**Decide D5 (currency).**~~ ✅ **Done.** USD-only. Documented in ACCOUNTING_MODEL.md, prompt 007, ledger rule.
+4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`. *(Still open — HIGH priority.)*
+5. ~~**Decide D4 (materials stub).**~~ ✅ **Done.** Manual confirmation event. Documented in prompt 010.
+6. ~~**Decide D6 (documents).**~~ ✅ **Done.** In scope, S3-backed. Added to module map, scaffold prompt, architecture docs.
 
-Items D7–D12 can be decided during the build but should be tracked.
+Items D7–D12 can be decided during the build but should be tracked. D7 (Epicor version) is partially resolved — Epicor Kinetic (cloud, latest) confirmed; reference data export still needed.
 
 ---
 
