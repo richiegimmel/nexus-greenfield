@@ -12,10 +12,10 @@ platform → modules → workflows → API composition
 - API layer: wiring only, no business logic
 
 ## Backend stack
-- FastAPI
+- FastAPI (sync endpoints — `def`, not `async def`, for all DB-touching routes)
 - Pydantic
-- SQLAlchemy + Alembic
-- PostgreSQL
+- SQLAlchemy + Alembic (**sync** — `create_engine`, `Session`; no async engine/session)
+- PostgreSQL (psycopg2)
 - Redis + Celery
 
 ## Frontend stack

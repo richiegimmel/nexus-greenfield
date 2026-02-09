@@ -1,5 +1,5 @@
 Implement platform core utilities:
-- database session management (async or sync, choose one and standardize)
+- database session management (**sync SQLAlchemy** — `create_engine`, `Session`, `def` endpoints; no async)
 - settings management (pydantic settings)
 - structured logging with correlation/request IDs
 - standardized error model:

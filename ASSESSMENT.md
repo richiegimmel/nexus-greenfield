@@ -121,9 +121,9 @@ Prompt `003` explicitly says "async or sync, choose one and standardize." This d
 - Mixing sync and async SQLAlchemy sessions is a well-known source of bugs (event loop conflicts, session lifecycle mismatches between FastAPI request handlers and Celery workers).
 
 **Decision needed:**
-- [ ] Sync or async SQLAlchemy sessions?
+- [x] Sync or async SQLAlchemy sessions? **→ DECIDED: Sync.**
 
-**Recommendation:** Use **sync SQLAlchemy**. Rationale:
+**Rationale (locked in):**
 - This is a single-tenant internal system, not a high-concurrency SaaS product. The concurrency benefits of async are minimal.
 - Celery workers (which handle outbox processing and projection updates) run synchronously. Mixing sync workers with async request handlers adds complexity for no benefit.
 - Sync is simpler to debug, test, and reason about — important when AI agents are writing the code.
@@ -244,7 +244,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 |---|----------|----------|----------|--------|
 | D1 | Chart of accounts schema (hierarchy, type, account_number) | HIGH | M2 | `OPEN` |
 | D2 | Build thin `party` module in M2? | HIGH | M2 | `OPEN` |
-| D3 | Sync vs async SQLAlchemy | HIGH | M0 | `OPEN` |
+| D3 | Sync vs async SQLAlchemy | HIGH | M0 | `DECIDED` — Sync. See §3.3. |
 | D4 | Material allocation stub strategy for M4 | MEDIUM | M4 | `OPEN` |
 | D5 | Multi-currency: USD-only or add currency fields? | MEDIUM | M2 | `OPEN` |
 | D6 | Document/file storage in scope? | MEDIUM | M4 | `OPEN` |
@@ -261,7 +261,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 
 These should be completed before executing prompt `001`:
 
-1. **Decide D3 (sync vs async).** This affects the scaffold structure. Recommendation: sync.
+1. ~~**Decide D3 (sync vs async).**~~ **DECIDED: Sync SQLAlchemy.** All backend code uses synchronous `Session`, `create_engine()`, and `def` endpoints.
 2. **Decide D1 (COA schema).** Export Epicor COA if available. At minimum, add `account_type` and `account_number` to prompt `007`.
 3. **Decide D5 (currency).** Add a one-line constraint to `ACCOUNTING_MODEL.md`, or add the fields to prompt `007`.
 4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`.
