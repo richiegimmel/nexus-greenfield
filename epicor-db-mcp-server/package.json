@@ -1,0 +1,33 @@
+{
+  "name": "epicor-database-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Epicor database documentation",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "epicor",
+    "database",
+    "documentation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.3",
+    "csv-parse": "^5.6.0",
+    "dotenv": "^16.4.5",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/mssql": "^9.1.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

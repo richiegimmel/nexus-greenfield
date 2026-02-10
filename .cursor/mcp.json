@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "epicor-db": {
+      "command": "node",
+      "args": ["epicor-db-mcp-server/dist/index.js"]
+    }
+  }
+}
