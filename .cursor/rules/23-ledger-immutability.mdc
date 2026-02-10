@@ -10,6 +10,9 @@ globs:
 - Posted journal entries cannot be updated or deleted.
 - Corrections occur via reversals and/or new correcting entries.
 - Services must enforce balanced entries.
+- Accounting periods can be closed:
+  - Normal posting into a closed period is rejected.
+  - Adjusting entries may be posted into a closed period only when explicitly marked (`is_adjusting`) and justified (`adjusting_reason`).
 - All amounts are USD. No multi-currency fields. This is an explicit constraint.
 - Every ledger mutation must be tested:
   - posting immutability

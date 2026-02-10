@@ -264,6 +264,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 | D10 | Reporting / BI strategy | LOW | M5 | `OPEN` |
 | D11 | Frontend component library choice | LOW | M4 | `OPEN` |
 | D12 | Search strategy (pg full-text on read models?) | LOW | M4 | `OPEN` |
+| D13 | Period close semantics (closed periods; adjusting entries allowed with justification) | MEDIUM | M2 | `DECIDED` — **Closed to normal posting; allow explicit adjusting entries with reason.** Updated: ACCOUNTING_MODEL.md, prompt 007, ledger rule. |
 
 ---
 
@@ -277,6 +278,7 @@ These should be completed before executing prompt `001`:
 4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`. *(Still open — HIGH priority.)*
 5. ~~**Decide D4 (materials stub).**~~ ✅ **Done.** Manual confirmation event. Documented in prompt 010.
 6. ~~**Decide D6 (documents).**~~ ✅ **Done.** In scope, S3-backed. Added to module map, scaffold prompt, architecture docs.
+7. ~~**Decide D13 (period close + adjusting entries).**~~ ✅ **Done.** Closed periods reject normal postings; allow explicit adjusting entries with required reason. Documented in ACCOUNTING_MODEL.md, prompt 007, ledger rule.
 
 Items D7–D12 can be decided during the build but should be tracked. D7 (Epicor version) is partially resolved — Epicor Kinetic (cloud, latest) confirmed; reference data export still needed.
 
