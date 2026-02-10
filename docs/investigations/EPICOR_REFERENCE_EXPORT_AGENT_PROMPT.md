@@ -27,11 +27,11 @@ Create these files (names exactly as listed):
 
 If you can’t produce one of these, still include an empty file and explain why in `README_SUMMARY.md`.
 
-### Data hygiene
+### Data fidelity (no redaction)
 
-- It’s OK to redact sensitive fields (emails, phone numbers, addresses) if needed.
-- Do **not** redact account numbers/segment structure—those are essential.
-- If you must anonymize names, keep a stable mapping (so repeated entities remain consistent).
+- Provide **full-fidelity exports** (no redaction, no anonymization).
+- Include real names/addresses/emails/etc. if present in Epicor—this is an internal engineering artifact used to design schema and validate mappings.
+- If any data cannot be exported due to permission/tool limitations, explain exactly what is missing and why in `README_SUMMARY.md`.
 
 ## 1) Chart of Accounts (COA) — what to extract
 
@@ -84,7 +84,7 @@ Include:
 - `plant_id` / `site_id`
 - `name`
 - `active`
-- `address_present` (Y/N; you can redact addresses)
+- address fields (full address if available)
 
 ### Export: `cost_centers_or_segments.csv`
 
@@ -121,7 +121,7 @@ Include one row per period:
 - `end_date`
 - `status` (open/closed; or separate flags)
 - `closed_date`
-- `closed_by` (can redact user identity if needed)
+- `closed_by`
 - `module_close_flags` (GL/AP/AR/inventory close if those differ)
 
 ### Period/close questions to answer in `README_SUMMARY.md`
@@ -160,7 +160,7 @@ Include:
 - `shipto_id`
 - `name`
 - `active`
-- `address_present` (Y/N; redact address lines if needed)
+- address fields (full address if available)
 
 ### Export: `vendors.csv`
 
@@ -184,7 +184,7 @@ Include:
 - `remitto_id`
 - `name`
 - `active`
-- `address_present` (Y/N; redact address lines if needed)
+- address fields (full address if available)
 
 ### Party questions to answer in `README_SUMMARY.md`
 
