@@ -264,7 +264,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 | D10 | Reporting / BI strategy | LOW | M5 | `OPEN` |
 | D11 | Frontend component library choice | LOW | M4 | `OPEN` |
 | D12 | Search strategy (pg full-text on read models?) | LOW | M4 | `OPEN` |
-| D13 | Period close semantics (closed periods; adjusting entries allowed with justification) | MEDIUM | M2 | `DECIDED` — **Closed to normal posting; allow explicit adjusting entries with reason.** Updated: ACCOUNTING_MODEL.md, prompt 007, ledger rule. |
+| D13 | Period close semantics (hard close + audit/year-end adjustments) | MEDIUM | M2 | `OPEN` — **Preference: Option A (reopen → post explicitly flagged adjusting JEs → reclose), with versioned closes/statements.** Epicor check (read-only DB, company `160144`): primary calendar (`MAIN`) shows **12 periods** and `NumClosingPeriods = 0` (no “Period 13” to map). Also **no stored `FiscalPeriod = 0` rows** in `Erp.FiscalPer`/`Erp.GLJrnDtl` for `MAIN` (Epicor may display “Period 0” as a derived beginning-balance bucket). Remaining decision is the precise reopen/authorization + statement versioning semantics. |
 
 ---
 
@@ -278,7 +278,7 @@ These should be completed before executing prompt `001`:
 4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`. *(Still open — HIGH priority.)*
 5. ~~**Decide D4 (materials stub).**~~ ✅ **Done.** Manual confirmation event. Documented in prompt 010.
 6. ~~**Decide D6 (documents).**~~ ✅ **Done.** In scope, S3-backed. Added to module map, scaffold prompt, architecture docs.
-7. ~~**Decide D13 (period close + adjusting entries).**~~ ✅ **Done.** Closed periods reject normal postings; allow explicit adjusting entries with required reason. Documented in ACCOUNTING_MODEL.md, prompt 007, ledger rule.
+7. **Decide D13 (period close + audit adjustments).** **OPEN.** Preference is **Option A**: periods are hard-closed to normal posting; audit/year-end adjustments occur by **explicitly reopening a period (privileged)**, posting **explicitly flagged adjusting entries with required justification**, then **reclosing** to produce a new close “version” (so statements can be referenced by close version). Epicor check (read-only DB, company `160144`) indicates **no closing periods / “Period 13”** on the primary calendar. Also, there is **no stored `FiscalPeriod = 0`** for `MAIN` in `Erp.FiscalPer`/`Erp.GLJrnDtl` (Epicor may show “Period 0” as a derived beginning-balance bucket). So the remaining decision is internal policy + UX, not migration mapping.
 
 Items D7–D12 can be decided during the build but should be tracked. D7 (Epicor version) is partially resolved — Epicor Kinetic (cloud, latest) confirmed; reference data export still needed.
 

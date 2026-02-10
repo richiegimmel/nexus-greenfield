@@ -11,8 +11,8 @@ globs:
 - Corrections occur via reversals and/or new correcting entries.
 - Services must enforce balanced entries.
 - Accounting periods can be closed:
-  - Normal posting into a closed period is rejected.
-  - Adjusting entries may be posted into a closed period only when explicitly marked (`is_adjusting`) and justified (`adjusting_reason`).
+  - **Hard close preference (D13 unresolved):** posting into a closed period is rejected.
+  - **Audit adjustments preference (Option A):** handle year-end/audit adjustments via explicit **reopen → post adjusting entries → reclose**. While reopened for adjustments, allow posting **only** when explicitly marked (`is_adjusting`) and justified (`adjusting_reason`).
 - All amounts are USD. No multi-currency fields. This is an explicit constraint.
 - Every ledger mutation must be tested:
   - posting immutability

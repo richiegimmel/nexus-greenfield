@@ -13,8 +13,8 @@ Rules:
 - Posted entries are immutable: no updates/deletes; only reversals/new entries.
 - Period close:
   - Every entry belongs to exactly one `accounting_period` determined by `entry_date`.
-  - Normal posting into a closed period is rejected.
-  - Adjusting entries are allowed in closed periods only when explicitly marked and justified (see below).
+  - **Hard close preference (D13 unresolved):** posting into a closed period is rejected.
+  - **Audit adjustments preference (Option A):** handle year-end/audit adjustments via explicit **reopen → post adjusting entries → reclose** (so statements can be referenced by close version).
 - Provide service function post_entry() that enforces balancing.
 - Corrections via create_reversal_entry(original_entry_id) and optional create_correcting_entry().
 
@@ -23,17 +23,18 @@ Adjusting entries (period close model):
   - `is_adjusting` (bool, default false)
   - `adjusting_reason` (nullable string)
 - Posting rules:
-  - If target `accounting_period.status == closed` then `is_adjusting` must be true and `adjusting_reason` must be non-empty.
-  - (Future) Gate adjusting entries in closed periods behind RBAC permission.
+  - If target `accounting_period.status == closed` then posting is rejected (hard close).
+  - If a closed period has been explicitly reopened for adjustments (admin-only in v0), then allow posting **only** when `is_adjusting` is true and `adjusting_reason` is non-empty.
+  - Gate reopen/adjust-posting behind RBAC permission (policy TBD; treat as finance-admin / controller level).
 
 APIs:
 - create draft entry
 - post entry
 - reverse entry
-- list/create/close accounting periods (v0 can be admin-only; auth may be stubbed)
+- list/create/close/reopen accounting periods (v0 can be admin-only; auth may be stubbed)
 - query entries by source/date/dimensions
 
 Deliver:
 - module code + migrations
-- tests: immutability, balancing, reversal correctness, period close enforcement, adjusting entry requirements
+- tests: immutability, balancing, reversal correctness, period close enforcement, reopen-for-adjustments behavior, adjusting entry requirements
 - docs: /docs/domain/LEDGER.md and /docs/standards/IMMUTABLE_POSTING.md
