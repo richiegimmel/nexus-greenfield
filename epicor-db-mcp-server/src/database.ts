@@ -54,6 +54,17 @@ export class DatabaseManager {
     }
   }
 
+  /** Force-close the pool so the next call to connect() creates fresh TCP connections. */
+  async reconnect(): Promise<void> {
+    console.error('Reconnecting to database...');
+    if (this.pool) {
+      try { await this.pool.close(); } catch { /* ignore close errors */ }
+    }
+    this.pool = null;
+    this.connected = false;
+    await this.connect();
+  }
+
   async disconnect(): Promise<void> {
     if (this.pool) {
       await this.pool.close();
@@ -88,6 +99,21 @@ export class DatabaseManager {
       const result = await this.pool!.request().query(query);
       return result.recordset;
     } catch (error: any) {
+      // Retry once on connection-level errors (idle pool, ECONNRESET, etc.)
+      const isConnectionError =
+        error.code === 'ECONNRESET' ||
+        error.code === 'ESOCKET' ||
+        error.code === 'ECONNCLOSED' ||
+        error.message?.includes('Connection lost') ||
+        error.message?.includes('connection is closed');
+
+      if (isConnectionError) {
+        console.error('Connection error detected, retrying with fresh connection...');
+        await this.reconnect();
+        const retryResult = await this.pool!.request().query(query);
+        return retryResult.recordset;
+      }
+
       console.error('Query execution error:', error);
       throw new Error(`Query failed: ${error.message}`);
     }
