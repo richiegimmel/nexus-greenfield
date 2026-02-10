@@ -252,7 +252,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 
 | # | Decision | Severity | Blocking | Status |
 |---|----------|----------|----------|--------|
-| D1 | Chart of accounts schema (hierarchy, type, account_number) | HIGH | M2 | `OPEN` |
+| D1 | Chart of accounts schema (hierarchy, type, account_number) | HIGH | M2 | `READY TO DECIDE` — Epicor COA investigation complete (see `docs/investigations/EPICOR_COA_INVESTIGATION.md`). Option B (Normalize) recommended with specific schema. Needs formal accept. |
 | D2 | Build thin `party` module in M2? | HIGH | M2 | `OPEN` |
 | D3 | Sync vs async SQLAlchemy | HIGH | M0 | `DECIDED` — **Sync**. Updated: prompt 003, ARCHITECTURE_OVERVIEW.md, backend standards rule. |
 | D4 | Material allocation stub strategy for M4 | MEDIUM | M4 | `DECIDED` — **Manual confirmation event**. Updated: prompt 010. |
@@ -273,7 +273,7 @@ Summary of all decisions needed before coding begins. Mark each when decided.
 These should be completed before executing prompt `001`:
 
 1. ~~**Decide D3 (sync vs async).**~~ ✅ **Done.** Sync SQLAlchemy. Updated prompt 003, architecture docs, backend standards rule.
-2. **Decide D1 (COA schema).** Export Epicor COA if available. At minimum, add `account_type` and `account_number` to prompt `007`. *(Still open — HIGH priority.)*
+2. **Decide D1 (COA schema).** ✅ **Epicor COA investigation complete** (see `docs/investigations/EPICOR_COA_INVESTIGATION.md`). Option B (Normalize) recommended — 271 natural accounts, 26 categories with hierarchy. Needs formal accept, then update prompt `007` with specific schema. *(Ready to decide — HIGH priority.)*
 3. ~~**Decide D5 (currency).**~~ ✅ **Done.** USD-only. Documented in ACCOUNTING_MODEL.md, prompt 007, ledger rule.
 4. **Decide D2 (party module).** If yes, write a thin prompt and insert it into the build sequence before or alongside `007`. *(Still open — HIGH priority.)*
 5. ~~**Decide D4 (materials stub).**~~ ✅ **Done.** Manual confirmation event. Documented in prompt 010.
