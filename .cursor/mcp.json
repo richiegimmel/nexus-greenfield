@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "epicor-db": {
+      "command": "/home/richie/nexus-greenfield/.venv/bin/python",
+      "args": ["/home/richie/nexus-greenfield/epicor-mcp/server.py"]
+    }
+  }
+}
