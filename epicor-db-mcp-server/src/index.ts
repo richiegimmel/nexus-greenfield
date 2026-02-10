@@ -95,9 +95,10 @@ class EpicorDatabaseServer {
       }
     );
 
-    this.csvPath = process.env.EPICOR_CSV_PATH || join(dirname(__dirname), '..', 'epicor-database-docs', 'Ice.TableAttribute.csv');
-    this.relationsCsvPath = process.env.EPICOR_RELATIONS_CSV_PATH || join(dirname(__dirname), '..', 'epicor-database-docs', 'Ice.QueryRelation.csv');
-    this.relationFieldsCsvPath = process.env.EPICOR_RELATION_FIELDS_CSV_PATH || join(dirname(__dirname), '..', 'epicor-database-docs', 'Ice.QueryRelationField.csv');
+    const dataDir = join(dirname(__dirname), 'data');
+    this.csvPath = process.env.EPICOR_CSV_PATH || join(dataDir, 'Ice.TableAttribute.csv');
+    this.relationsCsvPath = process.env.EPICOR_RELATIONS_CSV_PATH || join(dataDir, 'Ice.QueryRelation.csv');
+    this.relationFieldsCsvPath = process.env.EPICOR_RELATION_FIELDS_CSV_PATH || join(dataDir, 'Ice.QueryRelationField.csv');
     
     // Initialize database manager if connection info provided.
     // Supports both SQL_SERVER_* (preferred) and DB_* (legacy) env var prefixes.
@@ -121,7 +122,10 @@ class EpicorDatabaseServer {
         password: password,
         port: parseInt(process.env.SQL_SERVER_PORT || process.env.DB_PORT || '1433'),
         options: {
-          encrypt: true,
+          // Epicor SaaS requires login-only encryption (not full TLS).
+          // encrypt: false still encrypts the login packet (password on the wire)
+          // but does not attempt full-connection TLS, which Epicor rejects.
+          encrypt: false,
           trustServerCertificate: true,
         }
       };
